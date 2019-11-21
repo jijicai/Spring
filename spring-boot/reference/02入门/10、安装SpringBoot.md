@@ -16,7 +16,7 @@ Spring Boot 可以与“经典”Java 开发工具一起使用，也可以作为
 
 Spring Boot 兼容 Apache Maven 3.3 或以上版本。如果尚未安装 Maven，可以按照 maven.apache.org 网站的说明进行操作。
 
-提示：在很多操作系统上，可以用 包管理器安装 Maven。如果你使用 OSX Homebrew，则请试一下 brew install maven。Ubuntu 用户可以运行 sudo apt-get install maven。用 Chocolately 的 Windows 用户可以从提升的（管理员）提示符运行 choco install maven 。
+提示：在很多操作系统上，可以用包管理器安装 Maven。如果你使用 OSX Homebrew，则请试一下 brew install maven。Ubuntu 用户可以运行 sudo apt-get install maven。用 Chocolately 的 Windows 用户可以从提升的（管理员）提示符运行 choco install maven 。
 
 Spring Boot 依赖项使用 org.springframework.boot groupId。通常，Maven POM 文件继承自 spring-boot-starter-parent 项目，并声明一或多个启动器的依赖项。Spring Boot 也提供可选的 Maven 插件来创建可执行的 jars。
 
@@ -75,7 +75,7 @@ Gradle 包装器提供了当需要创建项目时一个“获取” Gradle 的�
 
 Spring Boot CLI（Command Line Interface）是一个命令行工具，你可以使用它来快速创建 Spring 原型。它允许你运行 Groovy 脚本，这意味着你有一个熟悉的类似 Java 的语法，而没有那么多样板代码。
 
-你不需要使用 CLI 来处理 Spring Boot，但这绝对是让 Spring 应用程序起步的最快方法。
+你不是必须使用 CLI 来处理 Spring Boot，但这绝对是让 Spring 应用程序起步的最快方法。
 
 ### 10.2.1 手动安装
 
@@ -141,7 +141,7 @@ Homebrew 将 spring 安装到 /usr/local/bin 目录中。
 
 ### 10.2.5 命令行自动补全
 
-Spring Boot CLI 包括为 BASH 和 zsh shell 提供命令自动补全的脚本。你可以在任何 shell 中获取脚本（也称为 spring）,也可以将其放入你的个人或系统范围的bash 自动补全初始化中。在 Debian 系统中，系统范围的脚本位于 /shell-completion/bash 目录中，并且当新 shell 启动时，该目录中的所有脚本都被执行。例如，如果使用 SDKMAN! 安装了该脚本，则可以手动运行它，使用以下命令：
+Spring Boot CLI 包括为 BASH 和 zsh shell 提供命令自动补全的脚本。你可以在任何 shell 中获取脚本（也称为 spring）,也可以将其放入你的个人或系统范围的 bash 自动补全初始化中。在 Debian 系统中，系统范围的脚本位于 /shell-completion/bash 目录中，并且当新 shell 启动时，该目录中的所有脚本都被执行。例如，如果使用 SDKMAN! 安装了该脚本，则可以手动运行它，使用以下命令：
 
     $ . ~/.sdkman/candidates/springboot/current/shell-completion/bash/spring
     $ spring <HIT TAB HERE>
@@ -184,7 +184,7 @@ Spring Boot CLI 包括为 BASH 和 zsh shell 提供命令自动补全的脚本�
 
 ## 10.3 从早期版本的 Spring Boot 升级
 
-如果你正在从早期版本的 Spring Boot 升级，则请查看项目 wiki 上提供详细升级说明的“迁移指南”。还可以查看发布说明，以获得每个版本的新的和值得注意的特性列表。
+如果你正在从早期版本的 Spring Boot 升级，则请查看项目 wiki 上提供的详细升级说明的“迁移指南”。还可以查看发布说明，以获得每个版本的新的和值得注意的特性列表。
 
 当升级到一个新特性版本时，一些属性可能被重命名或删除。Spring Boot 提供了一种方法，可以在启动时分析应用程环境并打印诊断信息，还可以在运行时为你临时迁移属性。要启用该特性，请将以下依赖项添加到你的项目中：
 
@@ -198,18 +198,3 @@ Spring Boot CLI 包括为 BASH 和 zsh shell 提供命令自动补全的脚本�
 注释：一旦你做完迁移，请确保从你的项目依赖列表中移除此模块。
 
 要想升级已安装的 CLI，请使用合适的包管理命令（例如：brew upgrade），或者，如果你手动安装了 CLI，请遵循标准说明，记得更新 PATH 环境变量以移除任何旧的引用。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

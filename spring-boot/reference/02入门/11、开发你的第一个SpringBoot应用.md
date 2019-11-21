@@ -103,16 +103,17 @@ mvn dependency:tree 命令打印树表示的项目依赖项。你可以看到 sp
 
 第二个类级别注解是 @EnableAutoConfiguration。这个注解告诉 Spring Boot 根据你添加的 jar 依赖项“猜测”你想要如何配置 Spring。由于 spring-boot-starter-web 添加了 Tomcat 和 Spring MVC，因此自动配置假定你正在开发一个 web 应用程序并相应地设置 Spring。
 
-启动器和自动配置
+**启动器和自动配置**
+
 自动配置被设为可以很好地与启动器一起工作，但是这两个概念并没有直接捆绑在一起。你可以在启动器之外自由地选择 jar 依赖项。Spring Boot 仍然尽力自动配置应用程序。
 
 ### 11.3.3 “main” 方法
 
-我们应用的最后一部分是 main 方法。这只是一个遵循 Java 约定的应用程序入口点的标准方法。我们的 main 方法通过调用 run 委托给 Spring Boot 的 SpringApplication 类。SpringApplication 引导我们的应用程序，启动 Spring，然后启动自动配置的 Tomcat web 服务器。我们需要将 Example.class 作为一个参数传递给 run 方法，以告诉 SpringApplication 哪个是主 Spring 组件。数组 args 也被传递来公开任何命令行参数。 
+我们应用的最后一部分是 main 方法。这只是一个遵循 Java 约定的应用程序入口点的标准方法。我们的 main 方法通过调用 run 方法来委托给 Spring Boot 的 SpringApplication 类。SpringApplication 引导我们的应用程序，启动 Spring，然后启动自动配置的 Tomcat web 服务器。我们需要将 Example.class 作为一个参数传递给 run 方法，以告诉 SpringApplication 哪个是主 Spring 组件。数组 args 也被传递来公开任何命令行参数。 
 
 ## 11.4 运行示例
 
-此时，你的应用程序应该可以工作了。由于使用了 spring-boot-starter-parent POM，因此你有了一个有用的run 目标，可以用来启动应用程序。在项目的根目录下，敲下命令：mvn spring-boot:run，来启动应用程序。你应该可以看到与下面相似的输出： 
+此时，你的应用程序应该可以工作了。由于使用了 spring-boot-starter-parent POM，因此你有了一个有用的 run 目标，可以用来启动应用程序。在项目的根目录中，敲下命令：mvn spring-boot:run，来启动应用程序。你应该可以看到与下面相似的输出： 
 
     $ mvn spring-boot:run
     
@@ -138,7 +139,8 @@ mvn dependency:tree 命令打印树表示的项目依赖项。你可以看到 sp
 
 我们通过创建一个完全自包含的可执行 jar 文件来完成我们的示例，该文件可以在生成环境中运行。可执行 jar（有时候称为“胖 jar”）是包含编译类以及代码需要运行的所有 jar 依赖项的归档文件。
 
-可执行的 jars 和 Java
+**可执行的 jars 和 Java**
+
 Java 不提供加载嵌套 jar 文件（jar 文件本身包含在一个 jar 中）的标准方法。如果你希望发布一个自包含的应用程序，这可能会有问题。
 
 为了解决这个问题，许多开发者使用“uber” jars。一个 uber jar 将应用程序的所有依赖项的所有类都打包到单个归档文件中。这种方法的问题是很难看出应用程序中有哪些库。如果在多个 jar 中使用相同的文件名（但内容不同），也可能会出现问题。
