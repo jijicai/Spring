@@ -3,10 +3,10 @@
 许多 Spring Boot 开发者希望他们的应用使用自动配置、组件扫描，并且能够在“应用程序类”中定义额外的配置。可以使用单个 @SpringBootApplication 注解来启用这三个特性，它们是：
 
     （1）@EnableAutoConfiguration：启动 Spring Boot 自动配置机制。
-    （2）@Component：在应用程序所在的包上启用 @Component 扫描。
+    （2）@ComponentScan：在应用程序所在的包上启用 @Component 扫描。
     （3）@Configuration：允许在上下文中注册额外的 beans 或者导入 其他配置类。
 
-@SpringBootApplication 注解等价于使用具有默认属性的 @Configuration、@EnableAutoConfiguration 和 @Component，如下面的示例所示：
+@SpringBootApplication 注解等价于使用具有默认属性的 @Configuration、@EnableAutoConfiguration 和 @ComponentScan，如下面的示例所示：
 
     package com.example.myapplication;
     
