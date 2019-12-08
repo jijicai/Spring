@@ -1,0 +1,3 @@
+${Ansi.NAME}  ${AnsiColor.NAME}
+
+${spring-boot.version}
