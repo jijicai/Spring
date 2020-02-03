@@ -151,67 +151,330 @@ Spring Boot 还支持 Spring MVC 提供的高级资源处理特性，允许使�
 
 提示：这个特性已经在一篇专门的博客文章和 Spring 框架的参考文档中详细描述过了。
 
-29.1.6、欢迎页
+### 29.1.6、欢迎页
 
+Spring Boot 同时支持静态和模板化欢迎页面。它首先在配置的静态内容位置中查找 index.html 文件。如果没有找到，则查找 index 模板。如果找到其中之一，它将自动用作应用程序的欢迎页面。
 
+### 29.1.7、自定义 favicon
 
+Spring Boot 在配置的静态内容位置和类路径的根目录中查找 favicon.ico（按这个顺序）。如果存在这样的文件，它将自动用作应用程序的 favicon。
 
-29.1.7、自定义 favicon
+### 29.1.8、路径匹配与内容协商（Content Negotiation）
 
+Spring MVC 可以通过查看请求路径并将其与应用程序中定义的映射（例如，Controller 方法上的 @GetMapping 注解）匹配，将传入的 HTTP 请求映射到处理程序。
 
+Spring Boot 默认选择禁用后缀模式匹配，这意味着“GET/projects/spring-boot.json”之类的请求将不会与 @GetMapping("/projects/spring-boot") 映射匹配。这被认为是 Spring MVC 应用程序的最佳实践。这个特性在过去对于没有发送正确的“Accept”请求头的 HTTP 客户端非常有用；我们需要确保向客户端发送正确的 Content Type。如今，内容协商更加可靠。
 
+还有其他方法可以处理不一致地发送正确的“Accept”请求头的 HTTP 客户端。不用后缀匹配，我们可以使用查询参数来确保像“GET/projects/spring-boot?format=json”这样的请求会被映射到 @GetMapping("/projects/spring-boot")：
 
-29.1.8、路径匹配与内容协商
+    spring.mvc.contentnegotiation.favor-parameter=true
+    
+    # We can change the parameter name, which is "format" by default:
+    # spring.mvc.contentnegotiation.parameter-name=myparam
+    
+    # We can also register additional file extensions/media types with:
+    spring.mvc.contentnegotiation.media-types.markdown=text/markdown
 
+如果你理解这些注意事项，并且仍然希望应用程序使用后缀模式匹配，则需要以下配置：
 
+    spring.mvc.contentnegotiation.favor-path-extension=true
+    spring.mvc.pathmatch.use-suffix-pattern=true
 
+或者，与其打开所有后缀模式，不如只支持注册的后缀模式更安全。
 
-29.1.9、ConfigurableWebBindingInitializer
+    spring.mvc.contentnegotiation.favor-path-extension=true
+    spring.mvc.pathmatch.use-registered-suffix-pattern=true
+    
+    # You can also register additional file extensions/media types with:
+    # spring.mvc.contentnegotiation.media-types.adoc=text/asciidoc
 
+### 29.1.9、ConfigurableWebBindingInitializer
 
+Spring MVC 使用 WebBindingInitializer 为特定请求初始化 WebDataBinder。如果你创建自己的 ConfigurableWebBindingInitializer @Bean，则 Spring Boot 会自动配置 Spring MVC 来使用它。
 
+### 29.1.10、模板引擎
 
-29.1.10、模板引擎
+除了 REST web 服务，你还可以使用 Spring MVC 来提供动态 HTML 内容。Spring MVC 支持多种模板技术，包括：Thymeleaf、FreeMarker 和 JSPs。另外，许多其他的模板引擎还包括它们自己的 Spring MVC 集成。
 
+Spring Boot 包括对以下模板引擎的自动配置支持：
 
+（1）[FreeMarker](https://freemarker.apache.org/docs/)
 
+（2）[Groovy](http://docs.groovy-lang.org/docs/next/html/documentation/template-engines.html#_the_markuptemplateengine)
 
-29.1.11、错误处理
+（3）[Thymeleaf](https://www.thymeleaf.org/)
 
+（4）[Mustache](https://mustache.github.io/)
 
+提示：如果可能，应避免使用 JSPs。在将它们与嵌入式 servlet 容器一起使用时，有几个已知的限制。
 
+当你使用这些具有默认配置的模板引擎之一时，你的模板将自动从 src/main/resources/templates 中获取。
 
-29.1.12、Spring HATEOAS
+提示：根据你运行应用程序的方式，IntelliJ IDEA 对类路径的排序是不同的。在 IDE 中从主方法运行应用程序的顺序与使用 Maven 或 Gradle 或从其打包的 jar 运行应用程序的顺序不同。这可能会导致 Spring Boot 无法在类路径上找到模板。如果遇到此问题，可以在 IDE 中重新排序类路径，以将模块的类和资源放在第一位。或者，你可以配置模板前缀来搜索类路径上的每个模板目录，如下所示：classpath*:/templates/。
 
+### 29.1.11、错误处理
 
+默认情况下，Spring Boot 提供了一个 /error 映射，它以合理的方式处理所有错误，并在 servlet 容器中将其注册为“global”错误页。对于机器客户端，它生成一个 JSON 响应，其中包含错误、HTTP状态和异常消息的详细信息。对于浏览器客户端，有一个“whitelabel”错误视图，它以 HTML 格式呈现相同的数据（要对其进行自定义，请添加一个解析为 error 的 View）。若要完全替换默认行为，则可以实现 ErrorController 并注册该类型的 bean 定义，或者添加 ErrorAttributes 类型的 bean 来使用现有机制，但替换内容。
 
+提示：BasicErrorController 可以用作自定义 ErrorController 的基类。如果要为新内容类型添加处理程序（默认情况下是专门处理 text/html，并为其他所有内容提供回退），这一点特别有用。为此，扩展 BasicErrorController，添加一个带有 products 属性的 @RequestMapping 的公共方法，并创建一个新类型的 bean。
 
-29.1.13、CORS 支持
+你还可以定义一个用 @ControllerAdvice 注解的类来定制 JSON 文档，以返回特定的控制器和/或异常类型，如下面示例所示：
+```
+@ControllerAdvice(basePackageClasses = AcmeController.class)
+public class AcmeControllerAdvice extends ResponseEntityExceptionHandler {
 
+    @ExceptionHandler(YourException.class)
+    @ResponseBody
+    ResponseEntity<?> handleControllerException(HttpServletRequest request, Throwable ex) {
+        HttpStatus status = getStatus(request);
+        return new ResponseEntity<>(new CustomErrorType(status.value(), ex.getMessage()), status);
+    }
 
+    private HttpStatus getStatus(HttpServletRequest request) {
+        Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
+        if (statusCode == null) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return HttpStatus.valueOf(statusCode);
+    }
 
+}
+```
+在前面的示例中，如果 YourException 是由与 AcmeController 在同一个包中定义的控制器抛出的，则使用 CustomErrorType POJO 的 JSON 表示，而不是 ErrorAttributes 表示。
 
-29.2 Spring WebFlux 框架
+自定义错误页
 
+如果要显示给定状态码的自定义 HTML 错误页，则可以将文件添加到 /error 文件夹。错误页可以是静态 HTML（即添加到任何静态资源文件夹下）或使用模板生成。文件名应该是确切的状态码或序列掩码。
 
+例如，要将 404 映射到静态 HTML 文件，文件夹结构如下：
 
+    src/
+     +- main/
+         +- java/
+         |   + <source code>
+         +- resources/
+             +- public/
+                 +- error/
+                 |   +- 404.html
+                 +- <other public assets>
 
-29.2.1、Spring WebFlux 自动配置
+要使用 FreeMarker 模板映射所有 5xx 错误，文件夹结构如下：
 
+    src/
+     +- main/
+         +- java/
+         |   + <source code>
+         +- resources/
+             +- templates/
+                 +- error/
+                 |   +- 5xx.ftl
+                 +- <other templates>
 
+对于更复杂的映射，还可以添加实现 ErrorViewResolver 接口的 bean，如下面所示：
+```
+public class MyErrorViewResolver implements ErrorViewResolver {
 
+    @Override
+    public ModelAndView resolveErrorView(HttpServletRequest request,
+            HttpStatus status, Map<String, Object> model) {
+        // Use the request or status to optionally return a ModelAndView
+        return ...
+    }
 
-29.2.2、带有 HttpMessageReaders 和 HttpMessageWriters 的 HTTP 编解码器
+}
+```
+你还可以使用常规的 Spring MVC 特性，比如 @ExceptionHandler 方法和 @ControllerAdvice。然后，ErrorController 将拾取任何未处理的异常。
 
+在 Spring MVC 之外映射错误页
 
+对于不使用 Spring MVC 的应用程序，可以使用 ErrorPageRegistrar 接口直接注册 ErrorPages。这种抽象直接与底层的嵌入式 servlet 容器一起工作，即使没有 Spring MVC DispatcherServlet。
+```
+@Bean
+public ErrorPageRegistrar errorPageRegistrar(){
+    return new MyErrorPageRegistrar();
+}
 
+// ...
 
-29.2.3、静态内容
+private static class MyErrorPageRegistrar implements ErrorPageRegistrar {
 
+    @Override
+    public void registerErrorPages(ErrorPageRegistry registry) {
+        registry.addErrorPages(new ErrorPage(HttpStatus.BAD_REQUEST, "/400"));
+    }
 
+}
+```
+如果使用最终由 Filter 处理的路径注册 ErrorPage（这在某些非 Spring web 框架中很常见，如 Jersey 和 Wicket），则必须将 Filter 显示注册为 ERROR 调度器，如下面示例所示：
+```
+@Bean
+public FilterRegistrationBean myFilter() {
+    FilterRegistrationBean registration = new FilterRegistrationBean();
+    registration.setFilter(new MyFilter());
+    ...
+    registration.setDispatcherTypes(EnumSet.allOf(DispatcherType.class));
+    return registration;
+}
+```
+注意，默认的 FilterRegistrationBean 不包括错误调度器类型。
 
+注意：当部署到 servlet 容器时，Spring Boot 使用其错误页过滤器将带有错误状态的请求转发到相应的错误页。如果尚未提交响应，则只能将请求转发到正确的错误页面。默认情况下，WebSphere Application Server 8.0 及更高版本在成功完成 servlet 服务方法后提交响应。你应该通过将 com.ibm.ws.webcontainer.invokeFlushAfterService 设置为 false 来禁用此行为。
 
-29.2.4、模板引擎
+### 29.1.12、Spring HATEOAS
+
+如果你开发了一个使用超媒体的 RESTful API，那么 Spring Boot 为 Spring HATEOAS 提供了自动配置，它可以很好地与大多数应用程序一起工作。自动配置取代了使用 @EnableHypermediaSupport 的需要，并注册了许多bean来简化基于超媒体的应用程序的构建，包括一个LinkDiscoverers（用于客户端支持）和一个 ObjectMapper（配置为正确地将响应封入所需的表示）。ObjectMapper 是通过设置不同的 spring.jackson.* 属性来定制的，或者如果存在的话，可以使用 Jackson2ObjectMapperBuilder 来定制。
+
+你可以使用 @EnableHypermediaSupport 来控制 Spring HATEOAS 的配置。注意，这样做会禁用前面描述的 ObjectMapper 定制。
+
+### 29.1.13、CORS 支持
+
+跨源资源共享（CORS）是由大多数浏览器实现的 W3C 规范，它允许你灵活地指定什么样的跨域请求被授权，而不是使用一些不太安全和不太强大的方法，如 IFRAME 或 JSONP。
+
+从版本 4.2 开始，Spring MVC 支持 CORS。在 Spring Boot 应用程序中使用带有 @CrossOrigin 注解的控制器方法 CORS 配置不需要任何特定的配置。全局 CORS 配置可以通过使用自定义的 addCorsMappings(CorsRegistry) 方法注册 WebMvcConfigurer bean 来定义，如下面示例所示：
+```
+@Configuration
+public class MyConfiguration {
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/api/**");
+            }
+        };
+    }
+}
+```
+## 29.2 Spring WebFlux 框架
+
+Spring WebFlux 是 Spring framework 5.0 中引入的新的反应式 web 框架。与 Spring MVC 不同，它不需要 Servlet API ，完全异步且非阻塞，并通过 Reactor 项目实现反应式流规范。
+
+Spring WebFlux 有两种风格：函数式和基于注解的。基于注解的模型非常接近 Spring MVC 模型，如下面示例所示：
+```
+@RestController
+@RequestMapping("/users")
+public class MyRestController {
+
+    @GetMapping("/{user}")
+    public Mono<User> getUser(@PathVariable Long user) {
+        // ...
+    }
+
+    @GetMapping("/{user}/customers")
+    public Flux<Customer> getUserCustomers(@PathVariable Long user) {
+        // ...
+    }
+
+    @DeleteMapping("/{user}")
+    public Mono<User> deleteUser(@PathVariable Long user) {
+        // ...
+    }
+
+}
+```
+函数变体“WebFlux.fn”将路由配置与请求的实际处理分离，如下面示例所示：
+```
+@Configuration
+public class RoutingConfiguration {
+
+    @Bean
+    public RouterFunction<ServerResponse> monoRouterFunction(UserHandler userHandler) {
+        return route(GET("/{user}").and(accept(APPLICATION_JSON)), userHandler::getUser)
+                .andRoute(GET("/{user}/customers").and(accept(APPLICATION_JSON)), userHandler::getUserCustomers)
+                .andRoute(DELETE("/{user}").and(accept(APPLICATION_JSON)), userHandler::deleteUser);
+    }
+
+}
+
+@Component
+public class UserHandler {
+
+    public Mono<ServerResponse> getUser(ServerRequest request) {
+        // ...
+    }
+
+    public Mono<ServerResponse> getUserCustomers(ServerRequest request) {
+        // ...
+    }
+
+    public Mono<ServerResponse> deleteUser(ServerRequest request) {
+        // ...
+    }
+}
+```
+WebFlux 是 Spring 框架的一部分，其[参考文档](https://docs.spring.io/spring/docs/5.1.8.RELEASE/spring-framework-reference/web-reactive.html#webflux-fn)中提供了详细信息。
+
+提示：你可以定义任意多个 RouterFunction bean 来模块化路由器的定义。如果需要应用优先级，可以对 beans 进行排序。
+
+要开始，请将 spring-boot-starter-webflux 模块添加到应用程序中。
+
+注释：在应用程序中同时添加 spring-boot-starter-web 和 spring-boot-starter-webflux 模块会导致 Spring Boot 自动配置 Spring MVC，而不是 WebFlux。之所以选择这种行为，是因为许多 Spring 开发者将 spring-boot-starter-webflux 添加到他们的 Spring MVC 应用程序中，以使用反应式 WebClient。你仍然可以通过将所选应用程序类型设置为 SpringApplication.setWebApplicationType(WebApplicationType.REACTIVE) 来强制你的选择。
+
+### 29.2.1、Spring WebFlux 自动配置
+
+Spring Boot 为 Spring WebFlux 提供了自动配置，它可以很好地与大多数应用程序一起工作。
+
+自动配置在 Spring 默认设置的基础上添加了以下特性：
+
+    （1）为 HttpMessageReader 和 HttpMessageWriter 实例配置编解码器（本文档稍后介绍）。
+    （2）支持为静态资源提供服务，包括对 Webjar 的支持（稍后将在本文中描述）。
+
+如果你想保留 Spring Boot WebFlux 的特性，并且想添加额外的 WebFlux 配置，那么你可以添加自己的类型为 WebFluxConfigurer 类，但是不需要 @EnableWebFlux。
+
+如果您想完全控制 Spring WebFlux，可以添加自己的 @Configuration，并用 @EnableWebFlux 注解。
+
+### 29.2.2、带有 HttpMessageReaders 和 HttpMessageWriters 的 HTTP 编解码器
+
+Spring WebFlux 使用 HttpMessageReader 和 HttpMessageWriter 接口来转换 HTTP 请求和响应。它们是用 CodecConfigurer 配置的，通过查看类路径中可用的库来获得合理的默认值。
+
+Spring Boot 通过使用 CodecCustomizer 实例应用进一步的定制。例如，spring.jackson.* 配置键应用于 Jackson 编解码器。
+
+如果需要添加或自定义编解码器，则可以创建自定义 CodecCustomizer 组件，如下面示例所示：
+```
+import org.springframework.boot.web.codec.CodecCustomizer;
+
+@Configuration
+public class MyConfiguration {
+
+    @Bean
+    public CodecCustomizer myCodecCustomizer() {
+        return codecConfigurer -> {
+            // ...
+        }
+    }
+
+}
+```
+你还可以利用 [Boot 的自定义 JSON 序列化器和反序列化器](https://docs.spring.io/spring-boot/docs/2.1.6.RELEASE/reference/html/boot-features-developing-web-applications.html#boot-features-json-components)。
+
+### 29.2.3、静态内容
+
+默认情况下，Spring Boot 从类路径中名为 /static（或 /public 或 /resources 或 /META-INF/resources）的目录提供静态内容。它使用 Spring WebFlux 中的 ResourceWebHandler，这样你就可以通过添加自己的 WebFluxConfigurer 并重写 addResourceHandlers 方法来修改该行为。 
+
+默认情况下，资源被映射到 /**，但是你可以通过设置 spring.webflux.static-path-pattern 属性来优化它。例如，可以将所有资源重新定位到 /resources/** 中，如下所示：
+
+    spring.webflux.static-path-pattern=/resources/**
+
+还可以使用 spring.resources.static-locations 自定义静态资源位置。这样做会将默认值替换为目录位置列表。如果这样做，默认的欢迎页面检测将切换到你的自定义位置。因此，如果在启动时在你的任何位置有 index.html，它就是应用程序的主页。
+
+除了前面的列出的“标准”静态资源位置之外，Webjars 内容还有一个特殊情况。如果以 Webjars 格式打包，那么路径为 /webjars/** 的任何资源都将从 jar 文件中获得。
+
+提示：Spring WebFlux 应用程序并不严格依赖于 Servlet API，因此它们不能作为 war 文件部署，也不能使用 src/main/webapp 目录。
+
+### 29.2.4、模板引擎
+
+除了 REST web 服务，你还可以使用 Spring WebFlux 来提供动态 HTML 内容。Spring WebFlux 支持多种模板技术，包括 Thymeleaf、FreeMarker 和 Mustache。
+
+Spring Boot 包括对以下模板引擎的自动配置支持：
+
+（1）[FreeMarker](https://freemarker.apache.org/docs/)
+
+（2）[Thymeleaf](https://www.thymeleaf.org/)
+
+（3）[Mustache](https://mustache.github.io/)
+
+当你使用这些具有默认配置的模板引擎之一时，你的模板将自动从 src/main/resources/templates 中获取。
 
 
 
