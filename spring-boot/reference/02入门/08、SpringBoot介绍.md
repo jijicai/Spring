@@ -21,17 +21,19 @@ Spring Boot 2.1.6.RELEASE 需要 Java 8 ，并且兼容至 Java 11（包括在�
 
 为以下构建工具提供显示地构建支持：
 
-    构建工具（Build Tool）	版本（Version）
-    Maven					3.3+
-    Gradle					4.4+
+|构建工具（Build Tool）	|版本（Version）|
+|---|---|
+|Maven					|3.3+|
+|Gradle					|4.4+|
 
 ## 9.1 Servlet 容器
 
 Spring Boot 支持以下嵌入式的 servlet 容器：
 
-    名称（Nmae）				Servlet 版本（Servlet Version）
-    Tomcat 9.0				4.0
-    Jetty 9.4				3.1
-    Undertom 2.0				4.0
+|名称（Nmae）				|Servlet 版本（Servlet Version）|
+|---|---|
+|Tomcat 9.0				|4.0|
+|Jetty 9.4				|3.1|
+|Undertom 2.0			|4.0|
 
 你还可以将 Spring Boot 应用部署到任何 Servlet 3.1+ 兼容的容器中。
