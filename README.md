@@ -4,5 +4,5 @@
 
 1、Spring Boot 参考指南中文版（2.1.6.RELEASE）。
 
-![image](https://github.com/jijicai/Spring/blob/master/jijicai/img/weixin.png)
-![image](https://github.com/jijicai/Spring/blob/master/jijicai/img/toutiaohao.png)
+![image](jijicai/img/weixin.png)
+![image](jijicai/img/toutiaohao.png)
