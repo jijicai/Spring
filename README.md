@@ -4,5 +4,7 @@
 
 1、Spring Boot 参考指南中文版（2.1.6.RELEASE）。
 
+2、Spring Framework 参考指南中文版（5.2.4.RELEASE）。
+
 ![image](jijicai/img/weixin.png)
 ![image](jijicai/img/toutiaohao.png)
